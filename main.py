@@ -162,7 +162,15 @@ def fuzz_api(spec, base_url, num_requests, dry_run):
                         # Send the request
                         try:
                             with requests.Session() as session:
-                                response = session.send(prepared_request, verify=False)
+                                # verify=False is deliberate for fuzzing local
+                                # and self signed test targets, whose certs
+                                # would fail validation before any fuzzing
+                                # happened. It also means responses are not
+                                # authenticated, so do not point this at an
+                                # endpoint where identity matters. The
+                                # timeout keeps one hung endpoint from
+                                # holding the whole run.
+                                response = session.send(prepared_request, verify=False, timeout=10)
                             response.raise_for_status()  # Raise HTTPError for bad responses (4xx or 5xx)
 
                             # Validate the response against the schema (if available)
@@ -198,8 +206,14 @@ def main():
     parser = setup_argparse()
     args = parser.parse_args()
 
+    if args.requests < 1:
+        logging.error("Error: --requests must be at least 1.")
+        sys.exit(1)
     try:
         spec = load_openapi_spec(args.openapi_spec)
+        if not isinstance(spec, dict) or "paths" not in spec:
+            logging.error("Error: OpenAPI specification has no 'paths' object.")
+            sys.exit(1)
         fuzz_api(spec, args.base_url, args.requests, args.dry_run)
     except FileNotFoundError:
         sys.exit(1)
