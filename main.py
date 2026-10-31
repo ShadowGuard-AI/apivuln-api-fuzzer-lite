@@ -3,7 +3,7 @@ import json
 import logging
 import random
 import sys
-from urllib.parse import urljoin
+from urllib.parse import quote, urljoin
 
 import requests
 from jsonschema import validate, ValidationError
@@ -100,27 +100,44 @@ def fuzz_api(spec, base_url, num_requests, dry_run):
         num_requests (int): The number of requests to send per endpoint.
         dry_run (bool): If True, performs a dry run without sending actual requests.
     """
+    stats = {'attempted': 0, 'succeeded': 0, 'failed': 0, 'validated': 0, 'validation_failed': 0}
     for path, path_item in spec['paths'].items():
         for method, operation in path_item.items():
             if method.upper() in ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']:
                 logging.info(f"Fuzzing endpoint: {method.upper()} {path}")
                 for _ in range(num_requests):
+                    if not dry_run:
+                        stats['attempted'] += 1
                     try:
-                        # Prepare the request URL
-                        url = urljoin(base_url, path.lstrip('/'))
-
-                        # Prepare request parameters (query parameters and request body)
+                        # Prepare request parameters (query, header, and path
+                        # parameters) and the request body. Parameters can be
+                        # declared on the operation or on the path item.
                         params = {}
                         request_body = None
                         headers = {}
+                        resolved_path = path
 
-                        # Handle parameters
+                        all_parameters = []
+                        if isinstance(path_item.get('parameters'), list):
+                            all_parameters.extend(path_item['parameters'])
                         if 'parameters' in operation:
-                            for param in operation['parameters']:
-                                if param['in'] == 'query':
-                                    params[param['name']] = generate_fuzzed_data({'properties':{param['name']: param['schema']}}).get(param['name']) or 'fuzz'
-                                elif param['in'] == 'header':
-                                    headers[param['name']] = generate_fuzzed_data({'properties':{param['name']: param['schema']}}).get(param['name']) or 'fuzz'
+                            all_parameters.extend(operation['parameters'])
+                        for param in all_parameters:
+                            value = generate_fuzzed_data({'properties':{param['name']: param.get('schema', {})}}).get(param['name'])
+                            if value is None:
+                                value = 'fuzz'
+                            if param['in'] == 'query':
+                                params[param['name']] = value
+                            elif param['in'] == 'header':
+                                headers[param['name']] = value
+                            elif param['in'] == 'path':
+                                # Substitute the generated value into the
+                                # templated path. Sending the literal braces
+                                # would request a path the API does not have.
+                                resolved_path = resolved_path.replace('{' + param['name'] + '}', quote(str(value), safe=''))
+
+                        # Prepare the request URL from the resolved path
+                        url = urljoin(base_url, resolved_path.lstrip('/'))
 
                         # Handle request body
                         if 'requestBody' in operation and 'content' in operation['requestBody']:
@@ -144,10 +161,12 @@ def fuzz_api(spec, base_url, num_requests, dry_run):
                                 prepared_request = requests.Request('DELETE', url, params=params, headers=headers, data=request_body).prepare()
                             else:
                                 logging.error(f"Unsupported HTTP method: {method.upper()}")
+                                stats['failed'] += 1
                                 continue
 
                         except Exception as e:
                             logging.error(f"Error preparing request: {e}")
+                            stats['failed'] += 1
                             continue
                         
                         # Log the request details
@@ -179,23 +198,34 @@ def fuzz_api(spec, base_url, num_requests, dry_run):
                                     if 'schema' in content_schema:
                                         try:
                                             validate(instance=response.json(), schema=content_schema['schema'])
+                                            stats['validated'] += 1
                                             logging.info(f"Response validated successfully for {content_type}")
                                         except ValidationError as e:
+                                            stats['validation_failed'] += 1
                                             logging.warning(f"Response validation error: {e}")
                                             logging.debug(f"Response body: {response.text}")
                                         except json.JSONDecodeError:
                                              logging.warning("Response is not valid JSON, skipping validation")
                                         break # only consider the first content type
 
+                            stats['succeeded'] += 1
                             logging.info(f"Request successful. Status code: {response.status_code}")
 
                         except requests.exceptions.RequestException as e:
+                            stats['failed'] += 1
                             logging.error(f"Request failed: {e}")
                         except Exception as e:
+                            stats['failed'] += 1
                             logging.error(f"An unexpected error occurred: {e}")
                     except Exception as e:
+                        if not dry_run:
+                            stats['failed'] += 1
                         logging.error(f"An error occurred while processing endpoint {path}: {e}")
-    logging.info("Fuzzing completed.")
+    logging.info(
+        "Fuzzing completed. Requests attempted: %d, succeeded: %d, failed: %d, validated: %d, validation failures: %d."
+        % (stats['attempted'], stats['succeeded'], stats['failed'], stats['validated'], stats['validation_failed'])
+    )
+    return stats
 
 
 
@@ -214,7 +244,10 @@ def main():
         if not isinstance(spec, dict) or "paths" not in spec:
             logging.error("Error: OpenAPI specification has no 'paths' object.")
             sys.exit(1)
-        fuzz_api(spec, args.base_url, args.requests, args.dry_run)
+        stats = fuzz_api(spec, args.base_url, args.requests, args.dry_run)
+        if not args.dry_run and stats['succeeded'] == 0:
+            logging.error("Error: No request succeeded, so the fuzzing run did not test the API.")
+            sys.exit(1)
     except FileNotFoundError:
         sys.exit(1)
     except json.JSONDecodeError:

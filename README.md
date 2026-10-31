@@ -1,7 +1,7 @@
 ![Banner](banner.png)
 
 # apivuln-API-Fuzzer-Lite
-A lightweight fuzzer that generates semi-random API requests based on a provided OpenAPI/Swagger specification, focusing on edge cases and boundary conditions. It uses `requests` and `jsonschema` to validate requests and responses against the schema, reporting deviations. - Focused on Automated tools to scan REST APIs for common vulnerabilities like injection flaws, broken authentication, and data exposure. These tools use OpenAPI specifications (Swagger/JSON) or generate requests based on fuzzing techniques to identify potential weaknesses in API endpoints and data handling. They don't require significant system installations and focus on testing API security from an external perspective.
+A spec driven fuzzer that sends random, type shaped values to the endpoints declared in a provided OpenAPI/Swagger specification (JSON). Generated values are substituted for path, query, and header parameters and for request bodies. When an operation declares a 200 response schema, the response body is checked against that schema with `jsonschema`, and a failed check is logged as a warning. The closing line of a run counts the requests attempted, succeeded, failed, and validated, and a run in which no request succeeded exits 1 (a `--dry-run` run sends nothing and is exempt). This tool does not test for injection flaws, broken authentication, or data exposure, and it does not validate requests against the schema.
 
 ## Install
 `git clone https://github.com/ShadowStrikeHQ/apivuln-api-fuzzer-lite`
