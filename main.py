@@ -55,6 +55,11 @@ def load_openapi_spec(spec_path):
         raise
 
 
+# Nothing seeds Faker or random, so a run cannot be replayed. If the
+# server falls over on request seven, the exact body that did it exists
+# only in the debug log of the prepared request, if debug was on. For
+# a lite fuzzer I accept that, but it caps how far a finding can be
+# chased after the fact.
 def generate_fuzzed_data(schema):
     """
     Generates fuzzed data based on the provided schema.  This is a simplified
@@ -136,7 +141,12 @@ def fuzz_api(spec, base_url, num_requests, dry_run):
                                 # would request a path the API does not have.
                                 resolved_path = resolved_path.replace('{' + param['name'] + '}', quote(str(value), safe=''))
 
-                        # Prepare the request URL from the resolved path
+                        # urljoin treats a base without a trailing
+                        # slash as a file and drops its last segment,
+                        # so a base of http://host/api sends requests
+                        # to http://host/ instead of http://host/api/.
+                        # The base URL needs its trailing slash, and
+                        # nothing here adds or checks for one.
                         url = urljoin(base_url, resolved_path.lstrip('/'))
 
                         # Handle request body
@@ -190,6 +200,15 @@ def fuzz_api(spec, base_url, num_requests, dry_run):
                                 # timeout keeps one hung endpoint from
                                 # holding the whole run.
                                 response = session.send(prepared_request, verify=False, timeout=10)
+                            # Counting every 4xx and 5xx as a failed
+                            # request is a choice worth questioning: for
+                            # a fuzzer those responses are the material,
+                            # and a server that rejects every fuzzed
+                            # input with a clean 400 has behaved well,
+                            # not failed. The stats keep the word failed
+                            # anyway, and main below exits 1 when nothing
+                            # succeeded, so an API that shrugs off every
+                            # request reads as untested.
                             response.raise_for_status()  # Raise HTTPError for bad responses (4xx or 5xx)
 
                             # Validate the response against the schema (if available)
