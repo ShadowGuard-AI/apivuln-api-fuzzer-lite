@@ -3,162 +3,103 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Apivuln Api Fuzzer Lite: what it is, how it runs, where it stops</title>
-<meta name="description" content="Apivuln Api Fuzzer Lite is one of my projects. The README in the repo is short, so this page sticks to what the files themselves show.">
+<title>apivuln-api-fuzzer-lite: The Field Station's Rain Tree Frogs</title>
+<meta name="description" content="A spec driven fuzzer that sends random, type shaped values to endpoints declared in an OpenAPI or Swagger specification, and checks declared 200 response schemas.">
 <style>
-:root {
-  --bg: #0a0e1a; --panel: #11182c; --ink: #e9edf5;
-  --mut: #16203b;
-  --acc: #ff8c42; --acc2: #ffc46b;
-  --line: #11182c;
-}
-* { box-sizing: border-box; }
-body { margin: 0; background: var(--bg); color: var(--ink);
-  font-family: 'Book Antiqua', Georgia, serif; line-height: 1.55; }
-code, pre, .mono { font-family: 'Andale Mono', monospace; }
-a { color: var(--acc2); }
-.hero { padding: 3rem 6vw 1rem; }
-.hero img.banner { width: 100%; height: auto; border: 1px solid var(--line);
-  border-radius: 10px; }
-.logo { width: 92px; height: 92px; border-radius: 18px;
-  border: 1px solid var(--line); }
-h1 { font-size: 2.4rem; margin: 0.4em 0 0.1em; }
-h2 { border-bottom: 2px solid var(--acc); padding-bottom: 0.2em;
-  margin-top: 2em; }
-.lede { font-size: 1.15rem; max-width: 62ch; }
-main { padding: 0 6vw 3rem; max-width: 1180px; margin: 0 auto; }
-.grid { display: grid; gap: 1rem;
-  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
-.card { background: var(--panel); border: 1px solid var(--line);
-  border-radius: 12px; padding: 1rem 1.2rem; }
-.card.pop { animation: rise 0.7s ease both; }
-@keyframes rise { from { opacity: 0; transform: translateY(14px); }
-  to { opacity: 1; transform: none; } }
-pre.code { background: #101014; color: #e8e6df; padding: 1rem 1.2rem;
-  border-radius: 12px; overflow-x: auto; font-size: 0.86rem;
-  border-left: 5px solid var(--acc); }
-table { border-collapse: collapse; width: 100%; }
-td, th { border-bottom: 1px solid var(--line); padding: 0.45rem 0.6rem;
-  text-align: left; }
-.shots { display: grid; gap: 1rem;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
-.shots img { width: 100%; height: auto; border: 1px solid var(--line);
-  border-radius: 10px; background: #f4f1e8; }
-footer { padding: 2rem 6vw; border-top: 1px solid var(--line);
-  color: var(--mut); }
-.rail { display: flex; gap: 1.2rem; align-items: flex-start; }
-.rail nav { position: sticky; top: 1rem; min-width: 180px; }
-@media (max-width: 760px) { .rail { flex-direction: column; }
-  .rail nav { position: static; } }
-@media (prefers-reduced-motion: reduce) {
-  .card.pop { animation: none; } * { scroll-behavior: auto; } }
+@font-face{font-family:'Bacasime Antique';src:url('fonts/BacasimeAntique.ttf') format('truetype');}
+@font-face{font-family:'Cabin';src:url('fonts/Cabin.ttf') format('truetype');}
+:root{--slate:#454e5a;--slate-deep:#23282f;--copper:#965a32;--violet:#8054b4;--white:#eef0ea;--ink:#22262c}
+*{box-sizing:border-box}body{margin:0;background:var(--slate-deep);color:var(--ink);font-family:'Cabin',sans-serif;line-height:1.65}
+h1,h2,h3{font-family:'Bacasime Antique',serif;color:var(--slate)}
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:flex-end;background:var(--slate-deep)}
+.hero img.heroimg{width:100%;height:60vh;object-fit:cover;display:block}
+.hero .in{padding:1rem 6vw 2rem;max-width:1100px;margin:0 auto;width:100%}
+.hero h1{color:var(--white);font-size:2.9rem;margin:.4rem 0}
+.hero p{color:#c9cdc2}
+.logo{width:190px;border-radius:6px}
+main{padding:0 6vw 3rem;max-width:1100px;margin:0 auto}
+nav{display:flex;gap:.9rem;flex-wrap:wrap;margin:1.1rem 0}
+.jarbtn{position:relative;display:inline-block;text-decoration:none;background:var(--white);color:var(--slate);font-family:'Bacasime Antique',serif;font-size:1.2rem;padding:.8rem 1.2rem .55rem;border:2px solid #b9bcb2;border-top:9px solid var(--copper);border-radius:16px 16px 8px 8px}
+.jarbtn:after{content:'';position:absolute;left:10px;right:10px;bottom:5px;height:2px;background:transparent}
+.jarbtn:hover:after{background:var(--copper)}
+.jarbtn:active{filter:brightness(.88)}
+.jarbtn:focus-visible{outline:3px solid var(--violet);outline-offset:2px}
+.tray{background:var(--white);padding:.4rem 1.5rem 1.3rem;margin:1.8rem 0;position:relative;box-shadow:0 2px 0 rgba(0,0,0,.3)}
+.tray:before,.tray:after{content:'';position:absolute;top:7px;width:11px;height:11px;border-radius:50%;background:var(--copper);border:2px solid #6e4020}
+.tray:before{left:9px}.tray:after{right:9px}
+.tray h2{border-bottom:2px solid #ccd0c6;padding-bottom:.3rem;font-size:1.9rem}
+pre{background:var(--slate);color:var(--white);padding:1rem;overflow-x:auto}
+a{color:#5a3690;text-decoration:none}
+a:before{content:'';display:inline-block;width:11px;height:15px;margin-right:.45em;vertical-align:-2px;background:transparent;border:2px solid #5a3690;border-top:none;clip-path:polygon(38% 0,62% 0,62% 34%,88% 62%,76% 100%,24% 100%,12% 62%,38% 34%)}
+a:hover:before{background:var(--violet)}
+.jarbtn:before{content:none}
+.note{background:#fafaf4;border-top:8px solid var(--copper);padding:.2rem 1.3rem 1rem;margin:1.3rem 0;position:relative}
+.note:before{content:'';position:absolute;top:-15px;left:50%;width:13px;height:13px;border-radius:50%;background:var(--copper);border:2px solid #6e4020}
+.drip{height:30px;margin:2rem 0;border-top:3px solid var(--slate);position:relative}
+.drip:before{content:'';position:absolute;left:12%;top:3px;width:7px;height:11px;border-radius:0 0 6px 6px;background:var(--slate);box-shadow:180px 6px 0 -1px var(--slate),390px 2px 0 0 var(--slate),610px 8px 0 -1px var(--slate)}
+.drip:after{content:'';position:absolute;right:4%;top:16px;width:7px;height:11px;border-radius:0 0 6px 6px;background:var(--violet)}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:1.1rem}
+@media(max-width:760px){.cards{grid-template-columns:1fr}}
+footer{padding:1rem 6vw 2.4rem;max-width:1100px;margin:0 auto;color:#c9cdc2}
 </style>
 </head>
-<body class="layout-note">
-<!-- This page exists for apivuln-api-fuzzer-lite alone: the layout (notebook),
-     the colors, and the type were picked for this project, not
-     shared with the other project pages. The code block below is
-     copied from the file it names, line for line. If it looks
-     plain, that is because the project is plain, and I would
-     rather the page match the project than dress it up. The one
-     thing I will not do here is oversell: what this project does
-     not do is stated on the page, not hidden from it. -->
+<body>
 <header class="hero">
-  <img class="logo" src="assets/logo.png" alt="Apivuln Api Fuzzer Lite logo">
-  <img class="banner" src="assets/banner.png" alt="">
-  <h1>Apivuln Api Fuzzer Lite</h1>
-  <p class="mono"><a href="https://github.com/ShadowGuard-AI/apivuln-api-fuzzer-lite">github.com/ShadowGuard-AI/apivuln-api-fuzzer-lite</a></p>
+<img class="heroimg" src="assets/intro-banner.png" alt="Field station veranda after rain: a copper backed frog on a wet post, jars with labels turned away, no writing">
+<div class="in">
+<img class="logo" src="assets/logo.png" alt="Copper and slate tree frog clinging to a broad leaf, toe discs spread">
+<h1>apivuln-api-fuzzer-lite</h1>
+<p>The station record table, topics laid out like stations along the veranda bench. A serious station, run by people who know each frog by its call.</p>
+<nav>
+<a class="jarbtn" href="#bench1">The work</a>
+<a class="jarbtn" href="#bench3">How a run ends</a>
+<a class="jarbtn" href="#bench4">Getting it</a>
+<a class="jarbtn" href="#bench5">Parameters</a>
+</nav>
+</div>
 </header>
-
 <main>
-  <section class="rail">
-    <nav aria-label="on this page">
-      <p class="mono"><a href="#run">Run it</a><br>
-      <a href="#files">The files</a><br>
-      <a href="#sheets">The sheets</a><br>
-      <a href="https://github.com/ShadowGuard-AI/apivuln-api-fuzzer-lite">The repo</a></p>
-    </nav>
-    <div>
-      <p class="lede">Apivuln Api Fuzzer Lite is one of my projects. The README in the repo is short, so this page sticks to what the files themselves show.</p>
-      <div class="grid">
-        <div class="card pop"><h3>What it is</h3>
-          <p>Apivuln Api Fuzzer Lite: 3 files, 237 counted
-          lines across Python 216, Markdown 16, Text 5. One job, done in the
-          open, in files you can read.</p></div>
-        <div class="card pop"><h3>The biggest piece</h3>
-          <p><code>main.py</code> carries the most
-          lines. If the project grows, that file is where the growth
-          lands first, for better or worse.</p></div>
-        <div class="card pop"><h3>The honest gap</h3>
-          <p>No test files yet. That is the honest gap, and the roadmap in the visuals folder says what the first one should cover.</p></div>
-      </div>
-      <section id="run">
-        <h2>Run it</h2>
-        <p>The repo README has the exact commands for this one. The
-        shape is the shape for most of my projects: clone it, read the
-        top file first so you know what will happen, then run it on
-        something you do not mind breaking.</p>
-        <p class="mono">$ git clone https://github.com/ShadowGuard-AI/apivuln-api-fuzzer-lite.git<br>$ cd apivuln-api-fuzzer-lite</p>
-      </section>
-      
-  <section aria-label="real code">
-    <h2>The code, as it sits in the repo</h2>
-    <p>From <code>main.py</code>, line 16 on. I did
-    not tidy it for the page. What you see is what the file has.</p>
-    <pre class="code"><code>fake = Faker()
-
-def setup_argparse():
-    &quot;&quot;&quot;
-    Sets up the argument parser for the CLI.
-    Returns:
-        argparse.ArgumentParser: The argument parser object.
-    &quot;&quot;&quot;
-    parser = argparse.ArgumentParser(description=&quot;apivuln-API-Fuzzer-Lite: A lightweight API fuzzer based on OpenAPI/Swagger specifications.&quot;)
-    parser.add_argument(&quot;openapi_spec&quot;, help=&quot;Path to the OpenAPI/Swagger specification file (JSON/YAML).  Must be valid JSON for this lite implementation.&quot;)
-    parser.add_argument(&quot;base_url&quot;, help=&quot;Base URL of the API to fuzz.&quot;)
-    parser.add_argument(&quot;--requests&quot;, type=int, default=10, help=&quot;Number of requests to send per endpoint. Defaults to 10.&quot;)
-    parser.add_argument(&quot;--dry-run&quot;, action=&quot;store_true&quot;, help=&quot;Perform a dry run without sending actual requests.&quot;)
-
-    return parser
-
-def load_openapi_spec(spec_path):
-    &quot;&quot;&quot;
-    Loads the OpenAPI/Swagger specification from a JSON file.
-
-    Args:
-        spec_path (str): Path to the OpenAPI specification file.</code></pre>
-  </section>
-      <section id="files">
-        <h2>The files that matter</h2>
-        <table><tr><th>File</th><th>Lines</th></tr>
-        <tr><td><code>main.py</code></td><td>216</td></tr>
-        <tr><td><code>README.md</code></td><td>16</td></tr>
-        <tr><td><code>requirements.txt</code></td><td>5</td></tr>
-        </table>
-        <p>Names doing the work: <span class="mono">setup_argparse, load_openapi_spec, generate_fuzzed_data, fuzz_api, main</span>.</p>
-      </section>
-      <section id="sheets">
-        <h2>Drawn by hand</h2>
-        <p>I sketch my projects on notebook paper so I have to
-        understand them well enough to draw them. The full set,
-        with the counts and how they were counted, is the
-        <a href="https://github.com/ShadowGuard-AI/apivuln-api-fuzzer-lite/tree/main/apivuln-api-fuzzer-lite-Visuals">apivuln-api-fuzzer-lite-Visuals</a>
-        folder in the repo. Nothing is drawn over the binder holes.
-        That is a rule, not a style.</p>
-        <div class="shots">
-          <img src="assets/architecture.png" alt="Hand drawn architecture sheet for Apivuln Api Fuzzer Lite">
-          <img src="assets/flowchart.png" alt="Hand drawn flowchart sheet for Apivuln Api Fuzzer Lite">
-          <img src="assets/product-map.png" alt="Hand drawn product map sheet for Apivuln Api Fuzzer Lite">
-        </div>
-      </section>
-    </div>
-  </section>
+<section class="tray" id="bench1"><h2>Values Sent, Schemas Checked</h2>
+<p>apivuln-api-fuzzer-lite is a spec driven fuzzer that sends random, type shaped values to the endpoints declared in a provided OpenAPI or Swagger specification in JSON. Those values are substituted for path, query, and header parameters and for request bodies.</p>
+<p>What the lite tool does not do, stated here in the panel and not in a footnote: it does not test for injection flaws, broken authentication, or data exposure, and it does not validate requests against the schema.</p>
+</section>
+<div class="drip"></div>
+<section class="tray" id="bench2"><h2>The Check That Follows a Good Answer</h2>
+<p>When an operation declares a 200 response schema, the response body is checked against that schema with jsonschema, and a failed check is logged as a warning.</p>
+<p>That conditional stays whole on this bench: no declared 200 schema, no schema check to report.</p>
+</section>
+<div class="drip"></div>
+<section class="tray" id="bench3"><h2>How a Run Ends</h2>
+<p>The closing line of a run counts the requests attempted, succeeded, failed, and validated.</p>
+<div class="note"><h3>No Success, Exit 1. Dry Run Exempt.</h3>
+<p>A run in which no request succeeded exits 1, and a --dry-run run sends nothing and is exempt from that exit. Both halves of that rule stay together here.</p></div>
+</section>
+<div class="drip"></div>
+<section class="tray" id="bench4"><h2>Getting It and Calling It</h2>
+<pre>git clone https://github.com/ShadowStrikeHQ/apivuln-api-fuzzer-lite</pre>
+<pre>./apivuln-api-fuzzer-lite [params]</pre>
+<div class="note"><h3>Clone Line As Written: Wrong Account Named</h3>
+<p>The clone line above is the single install line exactly as the source writes it. It names the ShadowStrikeHQ account, while this repository lives under ShadowGuard-AI.</p></div>
+<div class="note"><h3>No Specification Argument Shown</h3>
+<p>The bracketed usage names no specification argument, even though the whole tool runs from a provided specification, so how the spec file is handed over is not spelled out in the source. No flag is invented on this page to fill that gap.</p></div>
+</section>
+<div class="drip"></div>
+<section class="tray" id="bench5"><h2>The Three Parameters</h2>
+<div class="cards">
+<div class="tray"><h3>-h</h3><p>Shows a help message and exits.</p></div>
+<div class="tray"><h3>--requests</h3><p>Sets the number of requests to send per endpoint. Defaults to 10.</p></div>
+<div class="tray"><h3>--dry-run</h3><p>Performs a dry run without sending actual requests.</p></div>
+</div>
+<p>No other parameters are listed in the source, and this bench says so rather than padding the row with likely switches for host, port, or output.</p>
+</section>
+<div class="drip"></div>
+<section class="tray" id="bench6"><h2>Rights to the Work</h2>
+<p>Copyright (c) ShadowStrikeHQ</p>
+<div class="note"><h3>Copyright As Written, No Licence Named</h3>
+<p>The source closes with that line and names no licence at all. It is reproduced as written here and is not dressed up as a licence grant.</p></div>
+<p><a href="https://github.com/ShadowGuard-AI/apivuln-api-fuzzer-lite">The repository on GitHub</a></p>
+</section>
 </main>
-<footer>
-  <p>Apivuln Api Fuzzer Lite is one of my projects. This page was written
-  from the repo itself on 2026-10-30: the counts are the
-  repo's counts, the code is the repo's code, and the gaps are the
-  repo's gaps.</p>
-</footer>
+<footer><p>Theme: The Field Station's Rain Tree Frogs. Type: Bacasime Antique for headings, Cabin for reading, both SIL Open Font License 1.1. The lettering reference Burger Frog was reference only and is not embedded.</p></footer>
 </body>
 </html>
