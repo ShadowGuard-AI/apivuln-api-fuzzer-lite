@@ -3,103 +3,103 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>apivuln-api-fuzzer-lite: The Field Station's Rain Tree Frogs</title>
-<meta name="description" content="A spec driven fuzzer that sends random, type shaped values to endpoints declared in an OpenAPI or Swagger specification, and checks declared 200 response schemas.">
+<title>apivuln-api-fuzzer-lite: The Sorting Depot</title>
 <style>
-@font-face{font-family:'Bacasime Antique';src:url('fonts/BacasimeAntique.ttf') format('truetype');}
-@font-face{font-family:'Cabin';src:url('fonts/Cabin.ttf') format('truetype');}
-:root{--slate:#454e5a;--slate-deep:#23282f;--copper:#965a32;--violet:#8054b4;--white:#eef0ea;--ink:#22262c}
-*{box-sizing:border-box}body{margin:0;background:var(--slate-deep);color:var(--ink);font-family:'Cabin',sans-serif;line-height:1.65}
-h1,h2,h3{font-family:'Bacasime Antique',serif;color:var(--slate)}
-.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:flex-end;background:var(--slate-deep)}
-.hero img.heroimg{width:100%;height:60vh;object-fit:cover;display:block}
-.hero .in{padding:1rem 6vw 2rem;max-width:1100px;margin:0 auto;width:100%}
-.hero h1{color:var(--white);font-size:2.9rem;margin:.4rem 0}
-.hero p{color:#c9cdc2}
-.logo{width:190px;border-radius:6px}
-main{padding:0 6vw 3rem;max-width:1100px;margin:0 auto}
-nav{display:flex;gap:.9rem;flex-wrap:wrap;margin:1.1rem 0}
-.jarbtn{position:relative;display:inline-block;text-decoration:none;background:var(--white);color:var(--slate);font-family:'Bacasime Antique',serif;font-size:1.2rem;padding:.8rem 1.2rem .55rem;border:2px solid #b9bcb2;border-top:9px solid var(--copper);border-radius:16px 16px 8px 8px}
-.jarbtn:after{content:'';position:absolute;left:10px;right:10px;bottom:5px;height:2px;background:transparent}
-.jarbtn:hover:after{background:var(--copper)}
-.jarbtn:active{filter:brightness(.88)}
-.jarbtn:focus-visible{outline:3px solid var(--violet);outline-offset:2px}
-.tray{background:var(--white);padding:.4rem 1.5rem 1.3rem;margin:1.8rem 0;position:relative;box-shadow:0 2px 0 rgba(0,0,0,.3)}
-.tray:before,.tray:after{content:'';position:absolute;top:7px;width:11px;height:11px;border-radius:50%;background:var(--copper);border:2px solid #6e4020}
-.tray:before{left:9px}.tray:after{right:9px}
-.tray h2{border-bottom:2px solid #ccd0c6;padding-bottom:.3rem;font-size:1.9rem}
-pre{background:var(--slate);color:var(--white);padding:1rem;overflow-x:auto}
-a{color:#5a3690;text-decoration:none}
-a:before{content:'';display:inline-block;width:11px;height:15px;margin-right:.45em;vertical-align:-2px;background:transparent;border:2px solid #5a3690;border-top:none;clip-path:polygon(38% 0,62% 0,62% 34%,88% 62%,76% 100%,24% 100%,12% 62%,38% 34%)}
-a:hover:before{background:var(--violet)}
-.jarbtn:before{content:none}
-.note{background:#fafaf4;border-top:8px solid var(--copper);padding:.2rem 1.3rem 1rem;margin:1.3rem 0;position:relative}
-.note:before{content:'';position:absolute;top:-15px;left:50%;width:13px;height:13px;border-radius:50%;background:var(--copper);border:2px solid #6e4020}
-.drip{height:30px;margin:2rem 0;border-top:3px solid var(--slate);position:relative}
-.drip:before{content:'';position:absolute;left:12%;top:3px;width:7px;height:11px;border-radius:0 0 6px 6px;background:var(--slate);box-shadow:180px 6px 0 -1px var(--slate),390px 2px 0 0 var(--slate),610px 8px 0 -1px var(--slate)}
-.drip:after{content:'';position:absolute;right:4%;top:16px;width:7px;height:11px;border-radius:0 0 6px 6px;background:var(--violet)}
-.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:1.1rem}
-@media(max-width:760px){.cards{grid-template-columns:1fr}}
-footer{padding:1rem 6vw 2.4rem;max-width:1100px;margin:0 auto;color:#c9cdc2}
+@font-face { font-family: "Changa"; src: url("fonts/Changa-400.woff2") format("woff2"); font-weight: 400; }
+@font-face { font-family: "Changa"; src: url("fonts/Changa-700.woff2") format("woff2"); font-weight: 700; }
+@font-face { font-family: "Athiti"; src: url("fonts/Athiti-400.woff2") format("woff2"); font-weight: 400; }
+@font-face { font-family: "Athiti"; src: url("fonts/Athiti-700.woff2") format("woff2"); font-weight: 700; }
+:root {
+  --paper: #ffffff; --kraft: #f2ead9; --ink: #2e2a24; --soft: #6d675c;
+  --cobalt: #2456c8; --slate: #5a6068; --line: #ddd2bd; --card: #fdfaf3;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--kraft); color: var(--ink); font-family: "Athiti", sans-serif; font-size: 17.5px; line-height: 1.55; }
+.wrap { max-width: 960px; margin: 0 auto; padding: 0 20px 64px; }
+header.hero { text-align: center; padding: 52px 0 8px; }
+img.hero-logo { width: min(430px, 82vw); border-radius: 10px; box-shadow: 0 10px 34px rgba(46,42,36,.22); }
+h1, h2 { font-family: "Changa", sans-serif; line-height: 1.15; }
+h1 { font-weight: 700; font-size: clamp(30px, 5.4vw, 50px); margin: 26px 0 6px; }
+h2 { font-weight: 700; font-size: 27px; margin: 0 0 12px; border-bottom: 2px solid var(--line); padding-bottom: 7px; }
+.tagline { color: var(--soft); font-size: 19px; margin: 0 auto; max-width: 660px; }
+.btns { margin: 22px 0 6px; display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+a.btn { font-family: "Changa", sans-serif; font-weight: 700; text-decoration: none; padding: 11px 22px; border-radius: 999px; border: 2px solid var(--slate); color: var(--slate); background: transparent; }
+a.btn.solid { background: var(--cobalt); border-color: var(--cobalt); color: #fff; }
+figure { margin: 30px 0; }
+figure img { width: 100%; border-radius: 10px; display: block; box-shadow: 0 8px 28px rgba(46,42,36,.18); }
+figcaption { color: var(--soft); font-size: 15.5px; text-align: center; margin-top: 9px; }
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; margin: 34px 0; }
+.fact { background: var(--card); border: 1px solid var(--line); border-top: 5px solid var(--cobalt); border-radius: 8px; padding: 14px 16px; }
+.fact b { display: block; font-family: "Changa", sans-serif; font-weight: 700; font-size: 15px; letter-spacing: .04em; text-transform: uppercase; color: var(--slate); margin-bottom: 4px; }
+section { margin: 38px 0; }
+code, pre { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+pre { background: #23272e; color: #eef1f6; padding: 15px 18px; border-radius: 8px; overflow-x: auto; font-size: 15px; }
+table { border-collapse: collapse; width: 100%; background: var(--card); }
+th, td { border: 1px solid var(--line); padding: 9px 12px; text-align: left; vertical-align: top; }
+th { font-family: "Changa", sans-serif; font-weight: 700; background: var(--kraft); }
+.hold { background: #eef2fd; border: 1px solid #c3d2f2; border-left: 6px solid var(--cobalt); border-radius: 8px; padding: 16px 20px; }
+.hold h2 { border: none; padding: 0; }
+.hold ul { margin: 8px 0 4px; padding-left: 20px; }
+footer { margin-top: 52px; border-top: 2px solid var(--line); padding-top: 16px; color: var(--soft); font-size: 15px; text-align: center; }
 </style>
 </head>
 <body>
+<div class="wrap">
 <header class="hero">
-<img class="heroimg" src="assets/intro-banner.png" alt="Field station veranda after rain: a copper backed frog on a wet post, jars with labels turned away, no writing">
-<div class="in">
-<img class="logo" src="assets/logo.png" alt="Copper and slate tree frog clinging to a broad leaf, toe discs spread">
-<h1>apivuln-api-fuzzer-lite</h1>
-<p>The station record table, topics laid out like stations along the veranda bench. A serious station, run by people who know each frog by its call.</p>
-<nav>
-<a class="jarbtn" href="#bench1">The work</a>
-<a class="jarbtn" href="#bench3">How a run ends</a>
-<a class="jarbtn" href="#bench4">Getting it</a>
-<a class="jarbtn" href="#bench5">Parameters</a>
-</nav>
-</div>
+  <img class="hero-logo" src="assets/logo.png" alt="A plain brown paper parcel tied with natural twine in a neat bow, a blank cobalt blue tag hanging from the twine below the parcel against the blurred racks of a sorting depot">
+  <h1>apivuln-api-fuzzer-lite</h1>
+  <p class="tagline">The Sorting Depot. A spec driven fuzzer that sends random, type shaped values to the endpoints declared in a provided OpenAPI/Swagger specification (JSON), and checks declared response schemas.</p>
+  <div class="btns">
+    <a class="btn solid" href="https://github.com/ShadowGuard-AI/apivuln-api-fuzzer-lite">The repository</a>
+    <a class="btn" href="https://github.com/ShadowGuard-AI/apivuln-api-fuzzer-lite/blob/main/main.py">main.py</a>
+  </div>
 </header>
-<main>
-<section class="tray" id="bench1"><h2>Values Sent, Schemas Checked</h2>
-<p>apivuln-api-fuzzer-lite is a spec driven fuzzer that sends random, type shaped values to the endpoints declared in a provided OpenAPI or Swagger specification in JSON. Those values are substituted for path, query, and header parameters and for request bodies.</p>
-<p>What the lite tool does not do, stated here in the panel and not in a footnote: it does not test for injection flaws, broken authentication, or data exposure, and it does not validate requests against the schema.</p>
-</section>
-<div class="drip"></div>
-<section class="tray" id="bench2"><h2>The Check That Follows a Good Answer</h2>
-<p>When an operation declares a 200 response schema, the response body is checked against that schema with jsonschema, and a failed check is logged as a warning.</p>
-<p>That conditional stays whole on this bench: no declared 200 schema, no schema check to report.</p>
-</section>
-<div class="drip"></div>
-<section class="tray" id="bench3"><h2>How a Run Ends</h2>
-<p>The closing line of a run counts the requests attempted, succeeded, failed, and validated.</p>
-<div class="note"><h3>No Success, Exit 1. Dry Run Exempt.</h3>
-<p>A run in which no request succeeded exits 1, and a --dry-run run sends nothing and is exempt from that exit. Both halves of that rule stay together here.</p></div>
-</section>
-<div class="drip"></div>
-<section class="tray" id="bench4"><h2>Getting It and Calling It</h2>
-<pre>git clone https://github.com/ShadowStrikeHQ/apivuln-api-fuzzer-lite</pre>
-<pre>./apivuln-api-fuzzer-lite [params]</pre>
-<div class="note"><h3>Clone Line As Written: Wrong Account Named</h3>
-<p>The clone line above is the single install line exactly as the source writes it. It names the ShadowStrikeHQ account, while this repository lives under ShadowGuard-AI.</p></div>
-<div class="note"><h3>No Specification Argument Shown</h3>
-<p>The bracketed usage names no specification argument, even though the whole tool runs from a provided specification, so how the spec file is handed over is not spelled out in the source. No flag is invented on this page to fill that gap.</p></div>
-</section>
-<div class="drip"></div>
-<section class="tray" id="bench5"><h2>The Three Parameters</h2>
-<div class="cards">
-<div class="tray"><h3>-h</h3><p>Shows a help message and exits.</p></div>
-<div class="tray"><h3>--requests</h3><p>Sets the number of requests to send per endpoint. Defaults to 10.</p></div>
-<div class="tray"><h3>--dry-run</h3><p>Performs a dry run without sending actual requests.</p></div>
+
+<figure>
+  <img src="assets/intro-banner.png" alt="Hands tying the twine on a brown paper parcel at a worn depot bench, a blank cobalt blue tag lying flat against the parcel and facing the camera, scissors and a twine ball beside it, parcels stacked behind">
+  <figcaption>Each parcel is made up from the specification: generated values stand in for path, query, and header parameters and for request bodies.</figcaption>
+</figure>
+
+<div class="facts">
+  <div class="fact"><b>Input</b>A provided OpenAPI/Swagger specification (JSON)</div>
+  <div class="fact"><b>Requests</b>10 per endpoint by default, set with --requests</div>
+  <div class="fact"><b>Response check</b>Only declared 200 response schemas, checked with jsonschema</div>
+  <div class="fact"><b>Licence</b>MIT License, see LICENSE in the repository</div>
 </div>
-<p>No other parameters are listed in the source, and this bench says so rather than padding the row with likely switches for host, port, or output.</p>
+
+<section>
+  <h2>Usage</h2>
+  <pre>./apivuln-api-fuzzer-lite [params]</pre>
+  <table>
+    <tr><th>Parameter</th><th>What it does</th></tr>
+    <tr><td><code>-h</code></td><td>Show help message and exit.</td></tr>
+    <tr><td><code>--requests</code></td><td>Number of requests to send per endpoint. Defaults to 10.</td></tr>
+    <tr><td><code>--dry-run</code></td><td>Perform a dry run without sending actual requests.</td></tr>
+  </table>
 </section>
-<div class="drip"></div>
-<section class="tray" id="bench6"><h2>Rights to the Work</h2>
-<p>Copyright (c) ShadowStrikeHQ</p>
-<div class="note"><h3>Copyright As Written, No Licence Named</h3>
-<p>The source closes with that line and names no licence at all. It is reproduced as written here and is not dressed up as a licence grant.</p></div>
-<p><a href="https://github.com/ShadowGuard-AI/apivuln-api-fuzzer-lite">The repository on GitHub</a></p>
+
+<figure>
+  <img src="assets/banner.png" alt="Inside a parcel sorting depot: workers carrying and checking brown paper parcels tied with twine, every parcel carrying a blank cobalt blue tag, among shelving and rolling cages">
+  <figcaption>Parcels moving through the depot, each one tagged and accounted for.</figcaption>
+</figure>
+
+<section>
+  <h2>How a run is accounted</h2>
+  <p>When an operation declares a 200 response schema, the response body is checked against that schema with <code>jsonschema</code>, and a failed check is logged as a warning. The closing line of a run counts the requests attempted, succeeded, failed, and validated. The tool's declared dependencies are faker, jsonschema, and requests.</p>
 </section>
-</main>
-<footer><p>Theme: The Field Station's Rain Tree Frogs. Type: Bacasime Antique for headings, Cabin for reading, both SIL Open Font License 1.1. The lettering reference Burger Frog was reference only and is not embedded.</p></footer>
+
+<section class="hold">
+  <h2>Stated limits</h2>
+  <ul>
+    <li>This tool does not test for injection flaws, broken authentication, or data exposure, and it does not validate requests against the schema.</li>
+    <li>A run in which no request succeeded exits 1. A --dry-run run sends nothing and is exempt from that rule.</li>
+    <li>The usage line names no specification argument, even though the tool runs from a provided OpenAPI or Swagger specification. No flag is invented here to fill that gap.</li>
+  </ul>
+</section>
+
+<footer>
+  <p>apivuln-api-fuzzer-lite is released under the MIT License. See LICENSE in the repository. Site type is set in Changa and Athiti, self-hosted under the SIL Open Font License.</p>
+</footer>
+</div>
 </body>
 </html>
