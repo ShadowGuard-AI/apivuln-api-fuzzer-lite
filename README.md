@@ -1,10 +1,10 @@
-![Field station veranda after rain: a copper backed frog on a wet post, jars with labels turned away, no writing](intro-banner.png)
+![Hands tying the twine on a brown paper parcel at a worn depot bench, a blank cobalt blue tag lying flat against the parcel and facing the camera, scissors and a twine ball beside it, parcels stacked behind](intro-banner.png)
 
 # apivuln-api-fuzzer-lite
 
-![The veranda with the large frog on its post and the project name painted in lab white on the slate collecting crate](banner.png)
+![Inside a parcel sorting depot: workers carrying and checking brown paper parcels tied with twine, every parcel carrying a blank cobalt blue tag, among shelving and rolling cages](banner.png)
 
-![Copper and slate tree frog clinging to a broad leaf, toe discs spread, the heading plate](logo.png)
+![A plain brown paper parcel tied with natural twine in a neat bow, a blank cobalt blue tag hanging from the twine below the parcel against the blurred racks of a sorting depot, the heading plate](logo.png)
 
 ![Veranda scene: the frog throat pouch swells and relaxes while the frog holds its post](scene.svg)
 
